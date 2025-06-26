@@ -1,31 +1,20 @@
-name: CI/CD Pipeline
+trigger:
+  - main
 
-on:
-  push:
-    branches:
-      - main
+pool:
+  vmImage: 'ubuntu-latest'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Install Node.js'
 
-      - name: Build the application
-        run: echo 'Building the application'
+  - script: npm install
+    displayName: 'Install dependencies'
 
-      - name: Run unit tests
-        run: echo 'Running unit tests'
+  - script: npm run build
+    displayName: 'Build app'
 
-      - name: Run integration tests
-        run: echo 'Running integration tests'
-
-      - name: Build docker image
-        run: echo 'Building the docker image'
-
-      - name: Push docker image
-        run: echo 'Pushing the docker image to the registry'
-
-      - name: Deploy the application
-        run: echo 'Deploying the application to the kubernetes cluster'
+  - script: npm test
+    displayName: 'Run tests'
